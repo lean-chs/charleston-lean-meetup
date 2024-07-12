@@ -16,6 +16,7 @@ Email [Jared](https://jaredcorduan.github.io) for an invitation.
 
 July 9, 2024 at the [CLC](https://www.charlestonlc.org/classes/charleston-lean-proof-assistant-meetup) - Natural Numbers
 * [Code](CharlestonLeanMeetup/Notes20240709.lean)
+* [Answers](CharlestonLeanMeetup/Answers20240709.lean)
 
 June 11, 2024 at the  [CLC](https://www.charlestonlc.org/classes/charleston-lean-proof-assistant-meetup) - Introduction
 * [Notes](notes/2024-06-11.md)
