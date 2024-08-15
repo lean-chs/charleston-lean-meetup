@@ -1,3 +1,5 @@
+namespace notes20240709
+
 /-
 
 == Inductive Types ==
@@ -287,3 +289,5 @@ instance : Setoid Z where
 
 def neg_two := Quotient.mk' (Z.mk N.zero two)
 #check neg_two
+
+end notes20240709

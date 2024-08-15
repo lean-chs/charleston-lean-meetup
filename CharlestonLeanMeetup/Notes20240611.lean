@@ -1,3 +1,5 @@
+namespace notes20240611
+
 def hello := "world"
 
 /- Define some constants. -/
@@ -303,3 +305,5 @@ instance : Group Z2 where
   one_mul := sorry
   mul_one := sorry
   mul_left_inv := sorry
+
+end notes20240611
