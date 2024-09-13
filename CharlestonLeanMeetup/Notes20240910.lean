@@ -5,6 +5,8 @@
 -- Lean also allows to prove using "tactic-style" proofs, as opposed to "term-style proofs"
 -- Tactics is a gateway to automation since automation is often implemented as tactics.
 
+namespace notes20240910
+
 theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by
   sorry
 
@@ -493,3 +495,5 @@ example : (¬p ∨ q) → (p → q) := sorry
 example : p ∨ False ↔ p := sorry
 example : p ∧ False ↔ False := sorry
 example : (p → q) → (¬q → ¬p) := sorry
+
+end notes20240910

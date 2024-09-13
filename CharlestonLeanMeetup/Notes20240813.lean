@@ -111,3 +111,5 @@ termination_by arr.size - i
 
 def Array.find (arr : Array α) (p : α → Bool) : Option (Nat × α) :=
   findHelper arr p 0
+
+end notes20240813
