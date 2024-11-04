@@ -60,15 +60,27 @@ variable (person : Type) (barber : person)
 variable (shaves : person → person → Prop)
 
 example (h : ∀ x : person, shaves barber x ↔ ¬ shaves x x) : False :=
-  sorry
+  have hb : shaves barber barber ↔ ¬ shaves barber barber := h barber
+  match hb with
+  | Iff.intro p q =>
+      have hnsbb : ¬ shaves barber barber := λ hsbb =>  (p hsbb) hsbb
+      have hsbb : shaves barber barber := q hnsbb
+      hnsbb hsbb
 
 end barber_paradox
 
-example (a : α) : (∃ x, p x → r) → (∀ x, p x) → r := sorry
+example (a : α) : (∃ x, p x → r) → (∀ x, p x) → r :=
+    λ (he : ∃ x, p x → r) (ha : ∀ x, p x) =>
+     match he with
+     | Exists.intro y py => py (ha y)
 
-example : ¬ (∃ x, p x) ↔ (∀ x, ¬ p x) := sorry
+example : ¬ (∃ x, p x) ↔ (∀ x, ¬ p x) :=
+  Iff.intro
+  (λ he => λ a => λ pa => he (Exists.intro a pa))
+  (λ ha => λ he => Exists.elim he (λ y py => ha y py))
 
-example : (∃ x, ¬ p x) → ¬ (∀ x, p x) := sorry
+example : (∃ x, ¬ p x) → ¬ (∀ x, p x) :=
+  λ he => λ ha => Exists.elim he (λ y py => py (ha y))
 
 
 variable {A B : Type}
