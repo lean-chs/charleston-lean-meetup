@@ -14,14 +14,13 @@ Email [Jared](https://jaredcorduan.github.io) for an invitation.
 
 ## Meetings
 
-August 13, 2024 at the [CLC](https://www.charlestonlc.org/classes/charleston-lean-proof-assistant-meetup) - Fixed-length vectors
-* [Code](CharlestonLeanMeetup/Notes20240813.lean)
-* [Notes](notes/2024-08-13.md)
+We meet on the second Tuesday of every month at the [CLC](https://www.charlestonlc.org/classes/charleston-lean-proof-assistant-meetup).
 
-July 9, 2024 at the [CLC](https://www.charlestonlc.org/classes/charleston-lean-proof-assistant-meetup) - Natural Numbers
-* [Code](CharlestonLeanMeetup/Notes20240709.lean)
-* [Answers](CharlestonLeanMeetup/Answers20240709.lean)
-
-June 11, 2024 at the  [CLC](https://www.charlestonlc.org/classes/charleston-lean-proof-assistant-meetup) - Introduction
-* [Notes](notes/2024-06-11.md)
-* [Code](CharlestonLeanMeetup/Notes20240611.lean)
+* January 14, 2024 - Monads
+* December 10, 2024 - Advent of code
+* November 12, 2024 - Programming in Lean basics / Perceus: Garbage Free Reference Counting with Reuse
+* October 8, 2024 - Quantifiers / Proving Lean Theorems in Zero-Knowledge
+* September 10, 2024 - Tactics
+* August 13, 2024 - Fixed-length vectors
+* July 9, 2024 - Natural Numbers
+* June 11, 2024  - Introduction
