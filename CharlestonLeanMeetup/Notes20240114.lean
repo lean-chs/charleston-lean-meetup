@@ -89,11 +89,11 @@ instance : Monad Maybe where
     | .none => .none
     | .just x => f x
 
-example : Maybe Nat :=
+example : Maybe String :=
   do
     let x <- .just 4
-    let y <- .just 5
-    return (x+y)
+    let y <- .just "hey"
+    return toString x ++ y
 
 
 def left_identity_maybe (a : α) (f : α → Maybe β) :
@@ -130,10 +130,15 @@ def assoc_maybe (ma : Maybe α) (f : α → Maybe β)  (g : β → Maybe γ):
 inductive Writer Λ α where
   | writer : Λ → α → Writer Λ α
 
-class Monoid (α : Type) where
-  e : α
-  opp : α → α → α
-  left_id : α → opp e a = a
+class Monoid (Λ : Type) where
+  e : Λ
+  opp : Λ → Λ → Λ
+  left_id : Λ → opp e a = a
+
+instance : Monoid String where
+  e := ""
+  opp s₁ s₂ := s₁ ++ s₂
+  left_id _ := rfl
 
 instance [Monoid Λ] : Monad (Writer Λ) where
 
@@ -144,6 +149,19 @@ instance [Monoid Λ] : Monad (Writer Λ) where
     | .writer l a =>
         match f a with
         | .writer l' b' => .writer (Monoid.opp l l') b'
+
+
+def writer_example : Writer String Nat :=
+  do
+    let x <- .writer "stuff about x\n" 4
+    let y <- .writer "stuff about y\n" 1
+    pure (x+y)
+
+
+instance : ToString (Writer String Nat) where
+  toString w := match w with | .writer l a => s!"{l} {a}"
+
+#eval writer_example
 
 -- helpers for left identity proof
 def get_l (w : Writer Λ α) : Λ := match w with | .writer l _ => l
@@ -193,6 +211,22 @@ instance (ρ : Type) : Monad (Reader ρ) where
     match ma with
     | .reader g =>
         .reader (λ r => match f (g r) with | .reader h => h r)
+
+def run_reader (r : Reader ρ α) (conf : ρ) : α :=
+  match r with | (.reader f) => f conf
+
+def f_r (s : String) (n : Nat) : String :=
+  s!"f-{n}-{s}"
+
+def g_r (n : Nat) : String :=
+  s!"g-{n}"
+
+def readme : Reader Nat String := do
+  let x <- .reader (f_r "hey")
+  let y <- .reader g_r
+  pure (x ++ "--" ++ y)
+
+#eval run_reader readme 42
 
 
 -- ==========
@@ -245,6 +279,11 @@ instance : Monad Identity where
 
   bind a f := f (unwrap a)
 
+example : Identity Nat := do
+  let x <- pure 4
+  let y <- pure (5 + ·)
+  pure (y x)
+
 -- ============
 -- == Either ==
 -- ============
@@ -252,6 +291,13 @@ instance : Monad Identity where
 inductive Either α β where
   | left : α → Either α β
   | right : β → Either α β
+
+instance (α β : Type) [ToString α] [ToString β] :
+  ToString (Either α β) where
+  toString e :=
+    match e with
+      | (.left a) => s!"Error: - {a}"
+      | (.right b) => s!"Success - {b}"
 
 instance (α : Type) : Monad (Either α) where
 
@@ -261,6 +307,13 @@ instance (α : Type) : Monad (Either α) where
     match a with
     | .left error => .left error
     | .right val => f val
+
+def either_example : Either String Nat := do
+  let x <- pure 4
+  let y <- .left "BOOM!!!"
+  pure (x+y)
+
+#eval either_example
 
 -- ===========
 -- == State ==
