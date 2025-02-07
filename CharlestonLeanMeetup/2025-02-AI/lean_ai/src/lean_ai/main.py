@@ -1,15 +1,3 @@
-import os
-import logging
-import subprocess
-import argparse
-import time
-
-from importlib import resources
-from typing import Dict, List
-from openai import OpenAI
-import requests
-import json5 as json
-
 """
 This program is a utility tool that allows a user to ask an AI to write or modify a single Lean code file.
 
@@ -130,8 +118,32 @@ TODO
 
 """
 
+import os
+import logging
+import subprocess
+import argparse
+import time
+
+from importlib import resources
+from typing import Dict, List
+from openai import OpenAI
+import requests
+import json5 as json
+
+
 # REQ:DEFAULT_LEAN_FILE
 DEFAULT_LEAN_FILE = "spec.lean"
+
+# Added new requirement: read_file function (REQ:read_file)
+def read_file(filename: str) -> str:
+    # REQ:read_file
+    try:
+        with open(filename, "r") as f:
+            lines = f.readlines()
+        numbered_lines = [f"{i+1}: {line.rstrip()}" for i, line in enumerate(lines)]
+        return "\n".join(numbered_lines)
+    except FileNotFoundError:
+        return ""
 
 # General Agent Class
 class Ai:
@@ -228,12 +240,8 @@ class Ai:
 
         while iteration < self.max_iterations:
             iteration += 1
-            # Read current lean file
-            try:
-                with open(filename, "r") as f:
-                    lean_code = f.read()
-            except FileNotFoundError:
-                lean_code = ""
+            # Read current lean file using new read_file function
+            lean_code = read_file(filename)
             # Run lean code to obtain compiler output
             compiler_output = self.run_lean_code(filename)
             # Create the AI messages
