@@ -102,6 +102,8 @@ Here are the main components of the program:
     138: print("done")
   so when line_start is equal to line_end the block is inserted at the line_start position.
 
+- (REQ:read_file) `read_file` function:
+  This function reads a file and returns its content with numbered lines to help reference specific code lines.
 
 
 
@@ -134,6 +136,7 @@ import json5 as json
 # REQ:DEFAULT_LEAN_FILE
 DEFAULT_LEAN_FILE = "spec.lean"
 
+
 # Added new requirement: read_file function (REQ:read_file)
 def read_file(filename: str) -> str:
     # REQ:read_file
@@ -144,6 +147,7 @@ def read_file(filename: str) -> str:
         return "\n".join(numbered_lines)
     except FileNotFoundError:
         return ""
+
 
 # General Agent Class
 class Ai:
@@ -161,7 +165,7 @@ class Ai:
         """
         # REQ:load_prompt
         try:
-            with open("prompts/intro.txt") as file:
+            with open("prompts/prompt.txt") as file:
                 prompt = file.read()
             self.system_prompt = prompt
             return prompt
@@ -172,15 +176,21 @@ class Ai:
     def parse_input(self):
         # REQ:parse_input
         parser = argparse.ArgumentParser(description="Lean AI utility")
-        parser.add_argument("--question", required=True, help="The question/problem for the AI")
-        parser.add_argument("--file", default=DEFAULT_LEAN_FILE, help="Lean file to modify")
+        parser.add_argument(
+            "--question", required=True, help="The question/problem for the AI"
+        )
+        parser.add_argument(
+            "--file", default=DEFAULT_LEAN_FILE, help="Lean file to modify"
+        )
         args = parser.parse_args()
         return args.question, args.file
 
-    def create_messages(self, lean_code: str, compiler_output: str, question: str) -> List[Dict[str, str]]:
+    def create_messages(
+        self, lean_code: str, compiler_output: str, question: str
+    ) -> List[Dict[str, str]]:
         # REQ:create_messages
         messages = [
-            {"role": "system", "content": self.system_prompt},
+            {"role": "user", "content": self.system_prompt},
             {"role": "user", "content": f"PROBLEM:\n{question}"},
             {"role": "user", "content": f"VIEW:\n{lean_code}"},
             {"role": "user", "content": f"TOOL_OUTPUT:\n{compiler_output}"},
@@ -190,11 +200,10 @@ class Ai:
     def send_message(self, messages: List[Dict[str, str]]) -> str:
         # REQ:send_message
         try:
-            response = self.client.ChatCompletion.create(
-                model="o3-mini",
-                messages=messages
+            response = self.client.chat.completions.create(
+                model="o3-mini", messages=messages
             )
-            response_text = response['choices'][0]['message']['content']
+            response_text = response.choices[0].message.content.strip()
             return response_text
         except Exception as e:
             logging.error(f"Error sending message: {e}")
@@ -210,7 +219,9 @@ class Ai:
             logging.error(f"Failed to parse AI response: {e}")
             return {}
 
-    def graft_block(self, filename: str, line_start: int, line_end: int, block: List[str]):
+    def graft_block(
+        self, filename: str, line_start: int, line_end: int, block: List[str]
+    ):
         # REQ:graft_block
         try:
             with open(filename, "r") as file:
@@ -218,7 +229,9 @@ class Ai:
             # Adjust for 1-based indexing
             start_idx = line_start - 1
             end_idx = line_end - 1
-            new_lines = lines[:start_idx] + [line + "\n" for line in block] + lines[end_idx:]
+            new_lines = (
+                lines[:start_idx] + [line + "\n" for line in block] + lines[end_idx:]
+            )
             with open(filename, "w") as file:
                 file.writelines(new_lines)
         except Exception as e:
@@ -266,6 +279,7 @@ class Ai:
             time.sleep(1)  # Optional delay between iterations
 
         print("Main loop completed.")
+
 
 # Entry point to main program
 if __name__ == "__main__":
