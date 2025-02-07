@@ -1,0 +1,28 @@
+Hello AI,
+
+You will be asked a question by the user about a Lean code file.
+You will receive:
+• A prompt (these instructions).
+• The user’s question or problem statement.
+• A view of the Lean file content, with numbered lines.
+• The compiler output after running the code.
+• If the code is correct: return { "done": true }
+• The AI response should have "notes" followed by "SEPARATE_NOTES_FROM_JSON" and then the JSON object.
+
+You must decide if the code is correct. If it is correct, return:
+{ "done": true }
+
+Otherwise, return:
+{
+  "done": false,
+  "graft": {
+    "line_start": <LINE_NUMBER>,
+    "line_end": <LINE_NUMBER>,
+    "block": [
+      "any new lines of code go here"
+    ]
+  }
+}
+
+The program will apply your block to the specified lines and rerun the code.
+This repeats until the code is correct or the maximum number of iterations is reached.
