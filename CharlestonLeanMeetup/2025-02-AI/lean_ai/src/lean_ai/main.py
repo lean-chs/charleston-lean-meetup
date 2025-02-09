@@ -53,6 +53,7 @@ Here are the main components of the program:
     - (REQ:llm_json_done)
       `{ done: true}`
       the AI thinks the problem is solved
+
     - (REQ:llm_json_graft)
       ```
       { done: false,
@@ -63,7 +64,7 @@ Here are the main components of the program:
          },
       }
       ```
-      the AI provides a block of modifications to the Lean code line-by-line. The pairs in the `modification_block` list are made of a line number and the new content of the line to modify. The sequence of pairs is supposed to be ordered by line number. The modifications are supposed to be applied in order to the Lean code.
+      the AI provides a block of modifications to the Lean code line-by-line. The pairs in the `block` list are made of a line number and the new content of the line to modify. The sequence of pairs is supposed to be ordered by line number. The modifications are supposed to be applied in order to the Lean code.
 
 - (REQ:main_loop) `main_loop` function:
   this function is the main loop of the program.
@@ -157,7 +158,7 @@ class Ai:
         # REQ:Ai
         self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
         self.system_prompt = ""
-        self.max_iterations = 5
+        self.max_iterations = 20
 
     def load_prompt(self):
         """
@@ -190,7 +191,7 @@ class Ai:
     ) -> List[Dict[str, str]]:
         # REQ:create_messages
         messages = [
-            {"role": "user", "content": self.system_prompt},
+            {"role": "system", "content": self.system_prompt},
             {"role": "user", "content": f"PROBLEM:\n{question}"},
             {"role": "user", "content": f"VIEW:\n{lean_code}"},
             {"role": "user", "content": f"TOOL_OUTPUT:\n{compiler_output}"},
@@ -249,20 +250,29 @@ class Ai:
     def main_loop(self):
         # REQ:main_loop
         question, filename = self.parse_input()
+
+        # Create lean file if it does not exist
+        if not os.path.exists(filename):
+            with open(filename, "w") as f:
+                f.write("")  # or add a placeholder line if desired
+            logging.info(f"Created new Lean file: {filename}")
+
         iteration = 0
 
         while iteration < self.max_iterations:
             iteration += 1
             # Read current lean file using new read_file function
             lean_code = read_file(filename)
+            logging.info(f"lean_code:\n{lean_code}\n\n")
             # Run lean code to obtain compiler output
             compiler_output = self.run_lean_code(filename)
+            logging.info(f"compiler_output:\n{compiler_output}\n\n")
             # Create the AI messages
             messages = self.create_messages(lean_code, compiler_output, question)
             # Send message to AI and receive response
             response_text = self.send_message(messages)
             ai_response = self.parse_ai_response(response_text)
-
+            logging.info(f"ai_response:\n{ai_response}\n\n")
             if ai_response.get("done"):
                 print("AI indicates problem solved.")
                 break
@@ -283,6 +293,9 @@ class Ai:
 
 # Entry point to main program
 if __name__ == "__main__":
+    # Set logging level to INFO
+    logging.basicConfig(level=logging.INFO)
+
     ai = Ai()
     ai.load_prompt()
     ai.main_loop()

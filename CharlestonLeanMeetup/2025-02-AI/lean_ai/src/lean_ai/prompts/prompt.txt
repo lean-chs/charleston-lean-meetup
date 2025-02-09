@@ -3,26 +3,132 @@ Hello AI,
 You will be asked a question by the user about a Lean code file.
 You will receive:
 • A prompt (these instructions).
-• The user’s question or problem statement.
-• A view of the Lean file content, with numbered lines.
-• The compiler output after running the code.
-• If the code is correct: return { "done": true }
-• The AI response should have "notes" followed by "SEPARATE_NOTES_FROM_JSON" and then the JSON object.
 
-You must decide if the code is correct. If it is correct, return:
+• The user’s question or problem statement. This is presented in a **PROBLEM** section.
+
+• A view of the Lean file content, with numbered lines. This is presented in a **VIEW** section.
+
+• The compiler output after running the code. This is presented in a **TOOL_OUTPUT** section.
+
+• If the code answers the question/problem and it is correct then return:
 { "done": true }
 
-Otherwise, return:
+• If the code does not fully answer the question/problem or it is incorrect then return a block of code to fix the issue following the format below
 {
   "done": false,
   "graft": {
     "line_start": <LINE_NUMBER>,
     "line_end": <LINE_NUMBER>,
-    "block": [
-      "any new lines of code go here"
-    ]
+    "block": [ LINE_CONTENT_1, ... , LINE_CONTENT_n],
+  }
+}
+With the effect of such block description in the section GRAFT_EXPLANATION below.
+
+
+• The AI response should have "notes" followed by "SEPARATE_NOTES_FROM_JSON" and then the JSON object.
+
+
+
+GRAFT_EXPLANATION:
+
+A graft object is a JSON object that describes a block of code that should be inserted into the Lean file. It has the format:
+{
+  "done": false,
+  "graft": {
+    "line_start": <LINE_NUMBER>,
+    "line_end": <LINE_NUMBER>,
+    "block": [ LINE_CONTENT_1, ... , LINE_CONTENT_n],
   }
 }
 
-The program will apply your block to the specified lines and rerun the code.
-This repeats until the code is correct or the maximum number of iterations is reached.
+The result of applying the graft object to the Lean file follows the following behavior:
+The "block" key is a list of strings that represent the lines of code that should be inserted into the Lean file, in place of the block between "line_start" (included) and "line_end" (excluded).
+
+To illustrate the expected behavior of the "graft" key on the Lean file we are going to provide some examples.
+Consider the following graft object:
+{
+  "done": false,
+  "graft": {
+    "line_start": 135,
+    "line_end": 135,
+    "block": [ "  # print i + 1", "  print(i+1)" ],
+  }
+}
+
+
+This function will take the block and insert it into the file between `line_start` (included) and `line_end` (excluded).
+
+Here are 3 examples illustrating the behavior of the graft object.
+
+- Example 1
+Suppose the section of the Lean file is:
+134: for i in range(10):
+135:    print(i)
+136: print("done")
+
+and the graft object is
+{
+  "done": false,
+  "graft": {
+    "line_start": 135,
+    "line_end": 136,
+    "block": [ "  # print i + 1", "  print(i+1)" ],
+  }
+}
+
+then the resulting Lean file would be:
+134: for i in range(10):
+135:    # print i + 1
+136:    print(i+1)
+137: print("done")
+
+
+- Example 2
+Suppose the section of the Lean file is
+134: for i in range(10):
+135:    print(i)
+136: print("done")
+
+and the graft object is
+{
+  "done": false,
+  "graft": {
+    "line_start": 135,
+    "line_end": 135,
+    "block": [ "  # print i + 1", "  print(i+1)" ],
+  }
+}
+
+then the resulting Lean file would be:
+134: for i in range(10):
+135:    print(i)
+136:    # print i + 1
+137:    print(i+1)
+138: print("done")
+so when line_start is equal to line_end the block is inserted between the line_start line and the next line.
+
+- Example 3
+Suppose the section of the Lean file is
+134: for i in range(10):
+135:    # print the index i
+136:    print(i)
+137: print("done")
+
+and the graft object is
+{
+  "done": false,
+  "graft": {
+    "line_start": 135,
+    "line_end": 136,
+    "block": [ ],
+  }
+}
+
+then the resulting Lean file would be:
+134: for i in range(10):
+135:    print(i)
+136: print("done")
+
+that means that when the block is empty the lines between line_start(included) and line_end(excluded) are removed from the Lean file.
+
+
