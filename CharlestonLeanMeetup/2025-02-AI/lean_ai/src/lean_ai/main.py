@@ -60,11 +60,11 @@ Here are the main components of the program:
          graft: {
            line_start: <LINE_START>,
            line_end:<LINE_END>,
-           block: [ LINE_CONTENT_1, ... , LINE_CONTENT_n]
+           block: [ <LINE_CONTENT_1>, ... , <LINE_CONTENT_n> ]
          },
       }
       ```
-      the AI provides a block of modifications to the Lean code line-by-line. The pairs in the `block` list are made of a line number and the new content of the line to modify. The sequence of pairs is supposed to be ordered by line number. The modifications are supposed to be applied in order to the Lean code.
+      the AI provides a block of modifications to the Lean code in a block line-by-line.
 
 - (REQ:main_loop) `main_loop` function:
   this function is the main loop of the program.
@@ -278,13 +278,15 @@ class Ai:
                 break
             elif "graft" in ai_response:
                 graft = ai_response["graft"]
-                line_start = graft.get("line_start")
-                line_end = graft.get("line_end")
-                block = graft.get("block")
-                self.graft_block(filename, line_start, line_end, block)
+                try:
+                    line_start = graft.get("line_start")
+                    line_end = graft.get("line_end")
+                    block = graft.get("block")
+                    self.graft_block(filename, line_start, line_end, block)
+                except Exception as e:
+                    logging.error(f"Error applying graft: {e}")
             else:
                 logging.error("Unexpected AI response format.")
-                break
 
             time.sleep(1)  # Optional delay between iterations
 

@@ -25,7 +25,7 @@ You will receive:
 With the effect of such block description in the section GRAFT_EXPLANATION below.
 
 
-• The AI response should have "notes" followed by "SEPARATE_NOTES_FROM_JSON" and then the JSON object.
+• The AI response should have **notes** followed by "SEPARATE_NOTES_FROM_JSON" followed by the JSON object.
 
 
 
@@ -41,10 +41,10 @@ A graft object is a JSON object that describes a block of code that should be in
   }
 }
 
-The result of applying the graft object to the Lean file follows the following behavior:
+Applying a graft object to a file has the following behavior:
 The "block" key is a list of strings that represent the lines of code that should be inserted into the Lean file, in place of the block between "line_start" (included) and "line_end" (excluded).
 
-To illustrate the expected behavior of the "graft" key on the Lean file we are going to provide some examples.
+To illustrate the expected behavior of the "graft" key on the Lean file we are going to provide several examples.
 Consider the following graft object:
 {
   "done": false,
