@@ -1,0 +1,38 @@
+[build-system]
+# Use setuptools for building the package.
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lean_ai"
+version = "0.1.0"
+description = "A simple description of my project."
+readme = "README.md"
+authors = [{ name = "Ben Razet", email = "blabla@blabla.com" }]
+license = { file = "LICENSE" }
+requires-python = ">=3.12"                                      # Require Python 3.12 or higher
+# List your runtime dependencies here.
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "jupyter",
+    "ipython",
+    "httpx",
+    "requests",
+    "openai==1.58.1",
+    "json5",
+    "bs4",
+]
+
+# Optional: Define keywords and classifiers to improve package discoverability.
+keywords = ["lean", "llm", "ai", "project", "python"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[tool.mypy]
+python_version = "3.12"       # Updated to require Python 3.12
+ignore_missing_imports = true
