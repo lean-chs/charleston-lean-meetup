@@ -166,7 +166,7 @@ class Ai:
         """
         # REQ:load_prompt
         try:
-            with open("prompts/prompt.txt") as file:
+            with resources.open_text("lean_ai.prompts", "prompt.txt") as file:
                 prompt = file.read()
             self.system_prompt = prompt
             return prompt
@@ -287,8 +287,6 @@ class Ai:
                     logging.error(f"Error applying graft: {e}")
             else:
                 logging.error("Unexpected AI response format.")
-
-            time.sleep(1)  # Optional delay between iterations
 
         print("Main loop completed.")
 
