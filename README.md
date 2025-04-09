@@ -16,6 +16,9 @@ Email [Jared](https://jaredcorduan.github.io) for an invitation.
 
 We meet on the second Tuesday of every month at the [CLC](https://www.charlestonlc.org/classes/charleston-lean-proof-assistant-meetup).
 
+* May 13, 2025 - TBD
+* April 8, 2025 - Proving language semantics
+* March 11, 2025 - Proving math theorems together (hackathon style)
 * February 11, 2025 - AI models in Lean development
 * January 14, 2025 - Monads
 * December 10, 2024 - Advent of code
