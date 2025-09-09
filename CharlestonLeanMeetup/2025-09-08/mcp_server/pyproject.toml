@@ -1,0 +1,12 @@
+[project]
+name = "mcp-server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=0.66.0",
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.13.1",
+    "python-dotenv>=1.1.1",
+]
