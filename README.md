@@ -1,4 +1,4 @@
-# Charleston Lean Meetup
+# Charleston Lean & AI Meetup
 
 ![Charleston Lean Meetup](images/chs-lean.jpg)
 
@@ -16,7 +16,7 @@ Email [Jared](https://jaredcorduan.github.io) for an invitation.
 
 We meet on the **second Tuesday** of every month at [Charleston Digital](https://www.charlestondigital.com).
 
-* October 14, 2025 - :sparkles:
+* October 14, 2025 - ✨
 * Sept 9, 2025 - [Goedel-Prover](https://arxiv.org/abs/2502.07640)
 * May 13, 2025 - Lean & AI
 * April 8, 2025 - Proving language semantics
